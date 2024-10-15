@@ -54,3 +54,13 @@ from customers c)
 as agecat
 group by age_category
 order by age_category;
+
+-- определяем количество уникальных покупателей и выручку, которую они принесли, по месяцам
+select
+	to_char(s.sale_date, 'YYYY-MM') as selling_month,
+	count(distinct s.customer_id) as total_customers,
+	trunc(sum(s.quantity * p.price)) as income
+from sales s
+left join products p on s.product_id = p.product_id
+group by to_char(s.sale_date, 'YYYY-MM')
+order by selling_month;
