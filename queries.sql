@@ -39,3 +39,18 @@ left join employees e on e.employee_id = s.sales_person_id
 left join products p on s.product_id = p.product_id
 group by e.first_name, e.last_name, to_char(s.sale_date,'Day'), extract(isodow from s.sale_date)
 order by extract(isodow from s.sale_date), seller;
+
+-- определяем количество покупателей в разных возрастных группах
+select
+	age_category,
+	count(*) as age_count
+from (select
+	case
+		when age > 15 and age < 26 then '16-25'
+		when age > 25 and age < 41 then '26-40'
+		else '40+'
+	end as age_category	
+from customers c)
+as agecat
+group by age_category
+order by age_category;
