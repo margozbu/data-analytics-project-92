@@ -32,12 +32,12 @@ order by average_income ASC;
 -- определяем выручку по дням недели
 select
 	concat_ws(' ', e.first_name, e.last_name) as seller,
-	to_char(s.sale_date,'Day') as day_of_week,
+	lower(to_char(s.sale_date,'Day')) as day_of_week,
 	trunc(sum(s.quantity * p.price)) as income
 from sales s
 left join employees e on e.employee_id = s.sales_person_id
 left join products p on s.product_id = p.product_id
-group by e.first_name, e.last_name, to_char(s.sale_date,'Day'), extract(isodow from s.sale_date)
+group by e.first_name, e.last_name, lower(to_char(s.sale_date,'Day')), extract(isodow from s.sale_date)
 order by extract(isodow from s.sale_date), seller;
 
 -- определяем количество покупателей в разных возрастных группах
