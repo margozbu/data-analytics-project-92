@@ -6,7 +6,7 @@ from customers;
 -- определяем десятку лучших продавцов
 select
 	concat_ws(' ', e.first_name, e.last_name) as seller,
-	count(s.sales_id)as operations,
+	count(s.sales_id) as operations,
 	floor(sum(s.quantity * p.price)) as income
 from sales s
 left join employees e on e.employee_id = s.sales_person_id
