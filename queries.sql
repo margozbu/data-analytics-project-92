@@ -63,33 +63,13 @@ group by to_char(s.sale_date, 'YYYY-MM')
 order by selling_month;
 
 -- определяем покупателей, первая покупка которых была в ходе проведения акций
-with tab1 as (
-select
-	s.customer_id,
+select distinct on (s.customer_id)
 	concat_ws(' ', c.first_name, c.last_name) as customer,
 	s.sale_date,
-	concat_ws(' ', e.first_name, e.last_name) as seller,
-	p.price
+	concat_ws(' ', e.first_name, e.last_name) as seller
 from sales s 
 left join customers c on s.customer_id = c.customer_id
 left join employees e on e.employee_id = s.sales_person_id
 left join products p on s.product_id = p.product_id
-group by s.customer_id, concat_ws(' ', c.first_name, c.last_name), s.sale_date, concat_ws(' ', e.first_name, e.last_name), p.price
-order by s.customer_id, customer, sale_date, seller, price
-),
-	
-tab2 as (
-select
-	*,
-	row_number() over (partition by tab1.customer_id order by tab1.customer_id, tab1.price) as rn
-from tab1
-order by tab1.customer, tab1.sale_date, rn, tab1.price
-)
-	
-select distinct on (tab2.customer_id)
-	tab2.customer,
-	tab2.sale_date,
-	tab2.seller
-from tab2
-where tab2.price = 0 and tab2.rn = 1
-order by tab2.customer_id;
+where p.price = 0
+order by s.customer_id, s.sale_date, p.price;
